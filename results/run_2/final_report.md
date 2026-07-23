@@ -1,6 +1,6 @@
 # Final Experimental Report — Nature-Inspired Augmentation Selection
 
-**Generated**: 2026-07-19 13:52 UTC
+**Generated**: 2026-07-21 06:33 UTC
 
 ---
 
@@ -8,27 +8,27 @@
 
 | Property | Value |
 |---|---|
-| Total Samples | 915 |
+| Total Samples | 482 |
 | Classes | Credit reporting or other personal consumer reports, Credit reporting, credit repair services, or other personal consumer reports, Debt collection, Credit card or prepaid card, Mortgage |
-| Training Set | 732 |
-| Validation Set | 80 |
-| Test Set | 183 |
+| Training Set | 385 |
+| Validation Set | 42 |
+| Test Set | 97 |
 
 ## 2. Label Distribution
 
 | Class | Count |
 |---|---|
-| Credit reporting or other personal consumer reports | 292 |
-| Credit reporting, credit repair services, or other personal consumer reports | 249 |
-| Debt collection | 107 |
-| Credit card or prepaid card | 47 |
-| Mortgage | 37 |
+| Credit reporting or other personal consumer reports | 98 |
+| Credit reporting, credit repair services, or other personal consumer reports | 108 |
+| Debt collection | 102 |
+| Credit card or prepaid card | 42 |
+| Mortgage | 35 |
 
 ## 3. FACI Statistics
 
 | Statistic | Value |
 |---|---|
-| Average FACI Scalar | 0.2049 |
+| Average FACI Scalar | 0.2098 |
 | Average Complexity | 0.5000 |
 | Average Semantic Entropy | 0.8000 |
 
@@ -36,21 +36,24 @@
 
 | Statistic | Value |
 |---|---|
-| Total Policies Generated | 25 |
+| Total Policies Generated | 7 |
 
 ### Strategy Breakdown
 
 | Strategy | Count |
 |---|---|
-| Hybrid | 25 |
+| No Augmentation | 1 |
+| BERT Contextual | 1 |
+| Back Translation | 3 |
+| Hybrid | 2 |
 
 ## 5. Optimizer Summary
 
 | Metric | Value |
 |---|---|
-| Average Expected Utility | 0.8195 |
-| Final Fitness Score | 0.8269 |
-| Average Runtime (s/chunk) | 7.45 |
+| Average Expected Utility | 0.5060 |
+| Final Fitness Score | 0.6779 |
+| Average Runtime (s/chunk) | 9.78 |
 | Average Peak Memory (MB) | 0.9 |
 
 ## 6. Training Curves & Visualizations
@@ -71,32 +74,32 @@ See `visualizations/` for:
 | Metric | Value |
 |---|---|
 | Loss | 0.0000 |
-| Accuracy | 0.6175 |
-| Macro Precision | 0.6325 |
-| Macro Recall | 0.6709 |
-| **Macro F1** | **0.6494** |
-| Weighted F1 | 0.6140 |
-| ROC AUC | 0.8613 |
+| Accuracy | 0.5052 |
+| Macro Precision | 0.6027 |
+| Macro Recall | 0.5110 |
+| **Macro F1** | **0.5300** |
+| Weighted F1 | 0.4999 |
+| ROC AUC | 0.7896 |
 
 ## 8. Per-Class Performance
 
 | Class | Precision | Recall | F1 |
 |---|---|---|---|
-| Credit reporting or other personal consumer reports | 0.6988 | 0.7160 | 0.7073 |
-| Credit reporting, credit repair services, or other personal consumer reports | 0.4808 | 0.4545 | 0.4673 |
-| Debt collection | 0.5556 | 0.5172 | 0.5357 |
-| Credit card or prepaid card | 0.7273 | 0.8889 | 0.8000 |
-| Mortgage | 0.7000 | 0.7778 | 0.7368 |
+| Credit reporting or other personal consumer reports | 0.5143 | 0.5806 | 0.5455 |
+| Credit reporting, credit repair services, or other personal consumer reports | 0.3810 | 0.3810 | 0.3810 |
+| Debt collection | 0.4516 | 0.5185 | 0.4828 |
+| Credit card or prepaid card | 1.0000 | 0.8750 | 0.9333 |
+| Mortgage | 0.6667 | 0.2000 | 0.3077 |
 
 ## 9. Confusion Matrix
 
 | True \ Pred | Credit reporting or other personal consumer reports | Credit reporting, credit repair services, or other personal consumer reports | Debt collection | Credit card or prepaid card | Mortgage |
 |---|---|---|---|---|---|
-| Credit reporting or other personal consumer reports | 58 | 18 | 4 | 1 | 0 |
-| Credit reporting, credit repair services, or other personal consumer reports | 22 | 25 | 6 | 0 | 2 |
-| Debt collection | 3 | 9 | 15 | 2 | 0 |
-| Credit card or prepaid card | 0 | 0 | 0 | 8 | 1 |
-| Mortgage | 0 | 0 | 2 | 0 | 7 |
+| Credit reporting or other personal consumer reports | 18 | 8 | 5 | 0 | 0 |
+| Credit reporting, credit repair services, or other personal consumer reports | 7 | 8 | 6 | 0 | 0 |
+| Debt collection | 10 | 3 | 14 | 0 | 0 |
+| Credit card or prepaid card | 0 | 0 | 0 | 7 | 1 |
+| Mortgage | 0 | 2 | 6 | 0 | 2 |
 
 ## 10. Discussion
 

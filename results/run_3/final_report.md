@@ -1,6 +1,6 @@
 # Final Experimental Report — Nature-Inspired Augmentation Selection
 
-**Generated**: 2026-07-19 13:55 UTC
+**Generated**: 2026-07-21 06:36 UTC
 
 ---
 
@@ -8,27 +8,27 @@
 
 | Property | Value |
 |---|---|
-| Total Samples | 915 |
+| Total Samples | 482 |
 | Classes | Credit reporting or other personal consumer reports, Credit reporting, credit repair services, or other personal consumer reports, Debt collection, Credit card or prepaid card, Mortgage |
-| Training Set | 732 |
-| Validation Set | 80 |
-| Test Set | 183 |
+| Training Set | 385 |
+| Validation Set | 42 |
+| Test Set | 97 |
 
 ## 2. Label Distribution
 
 | Class | Count |
 |---|---|
-| Credit reporting or other personal consumer reports | 292 |
-| Credit reporting, credit repair services, or other personal consumer reports | 249 |
-| Debt collection | 107 |
-| Credit card or prepaid card | 47 |
-| Mortgage | 37 |
+| Credit reporting or other personal consumer reports | 98 |
+| Credit reporting, credit repair services, or other personal consumer reports | 108 |
+| Debt collection | 102 |
+| Credit card or prepaid card | 42 |
+| Mortgage | 35 |
 
 ## 3. FACI Statistics
 
 | Statistic | Value |
 |---|---|
-| Average FACI Scalar | 0.2049 |
+| Average FACI Scalar | 0.2068 |
 | Average Complexity | 0.5000 |
 | Average Semantic Entropy | 0.8000 |
 
@@ -36,22 +36,25 @@
 
 | Statistic | Value |
 |---|---|
-| Total Policies Generated | 25 |
+| Total Policies Generated | 10 |
 
 ### Strategy Breakdown
 
 | Strategy | Count |
 |---|---|
-| Hybrid | 25 |
+| No Augmentation | 2 |
+| Back Translation | 2 |
+| BERT Contextual | 2 |
+| Hybrid | 4 |
 
 ## 5. Optimizer Summary
 
 | Metric | Value |
 |---|---|
-| Average Expected Utility | 0.8216 |
-| Final Fitness Score | 0.8290 |
-| Average Runtime (s/chunk) | 5.29 |
-| Average Peak Memory (MB) | 0.9 |
+| Average Expected Utility | 0.5848 |
+| Final Fitness Score | 0.7708 |
+| Average Runtime (s/chunk) | 12.66 |
+| Average Peak Memory (MB) | 1.0 |
 
 ## 6. Training Curves & Visualizations
 
@@ -71,32 +74,32 @@ See `visualizations/` for:
 | Metric | Value |
 |---|---|
 | Loss | 0.0000 |
-| Accuracy | 0.6667 |
-| Macro Precision | 0.6473 |
-| Macro Recall | 0.7043 |
-| **Macro F1** | **0.6648** |
-| Weighted F1 | 0.6622 |
-| ROC AUC | 0.8821 |
+| Accuracy | 0.5361 |
+| Macro Precision | 0.6109 |
+| Macro Recall | 0.5452 |
+| **Macro F1** | **0.5659** |
+| Weighted F1 | 0.5272 |
+| ROC AUC | 0.8026 |
 
 ## 8. Per-Class Performance
 
 | Class | Precision | Recall | F1 |
 |---|---|---|---|
-| Credit reporting or other personal consumer reports | 0.7326 | 0.7778 | 0.7545 |
-| Credit reporting, credit repair services, or other personal consumer reports | 0.5625 | 0.4909 | 0.5243 |
-| Debt collection | 0.7083 | 0.5862 | 0.6415 |
-| Credit card or prepaid card | 0.5333 | 0.8889 | 0.6667 |
-| Mortgage | 0.7000 | 0.7778 | 0.7368 |
+| Credit reporting or other personal consumer reports | 0.5128 | 0.6452 | 0.5714 |
+| Credit reporting, credit repair services, or other personal consumer reports | 0.4167 | 0.2381 | 0.3030 |
+| Debt collection | 0.5000 | 0.5926 | 0.5424 |
+| Credit card or prepaid card | 1.0000 | 0.7500 | 0.8571 |
+| Mortgage | 0.6250 | 0.5000 | 0.5556 |
 
 ## 9. Confusion Matrix
 
 | True \ Pred | Credit reporting or other personal consumer reports | Credit reporting, credit repair services, or other personal consumer reports | Debt collection | Credit card or prepaid card | Mortgage |
 |---|---|---|---|---|---|
-| Credit reporting or other personal consumer reports | 63 | 14 | 2 | 2 | 0 |
-| Credit reporting, credit repair services, or other personal consumer reports | 20 | 27 | 3 | 3 | 2 |
-| Debt collection | 3 | 6 | 17 | 2 | 1 |
-| Credit card or prepaid card | 0 | 0 | 1 | 8 | 0 |
-| Mortgage | 0 | 1 | 1 | 0 | 7 |
+| Credit reporting or other personal consumer reports | 20 | 4 | 6 | 0 | 1 |
+| Credit reporting, credit repair services, or other personal consumer reports | 10 | 5 | 6 | 0 | 0 |
+| Debt collection | 8 | 3 | 16 | 0 | 0 |
+| Credit card or prepaid card | 0 | 0 | 0 | 6 | 2 |
+| Mortgage | 1 | 0 | 4 | 0 | 5 |
 
 ## 10. Discussion
 

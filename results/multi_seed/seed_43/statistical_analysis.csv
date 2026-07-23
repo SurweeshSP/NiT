@@ -1,0 +1,9 @@
+Baseline,Mean F1,Std F1,CI_lower,CI_upper,p_value,Significant
+Proposed Hybrid GA-GWO,0.5143,0.2578,0.352143,0.676378,1.0,No
+No Augmentation,0.5815,0.197,0.486912,0.676063,1.0,No
+EDA,0.5927,0.2216,0.486279,0.699109,1.0,No
+Synonym Replacement,0.5776,0.2216,0.471182,0.683962,1.0,No
+Back Translation,0.6069,0.2104,0.505847,0.707918,1.0,No
+Contextual Augmentation (BERT),0.5626,0.1874,0.472591,0.652523,1.0,No
+DistilBERT Only,0.5742,0.1941,0.481012,0.667424,1.0,No
+RoBERTa Only,0.5898,0.2019,0.492865,0.686712,1.0,No

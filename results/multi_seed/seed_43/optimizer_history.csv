@@ -1,0 +1,154 @@
+run_id,seed,baseline,chunk,fitness,expected_utility
+43,43,Proposed Hybrid GA-GWO,0,0.0,0.0
+43,43,Proposed Hybrid GA-GWO,1,0.0,0.0
+43,43,Proposed Hybrid GA-GWO,2,0.0,0.0
+43,43,Proposed Hybrid GA-GWO,3,0.0,0.0
+43,43,Proposed Hybrid GA-GWO,4,0.0,0.0
+43,43,Proposed Hybrid GA-GWO,5,0.0,0.0
+43,43,Proposed Hybrid GA-GWO,6,0.0,0.0
+43,43,Proposed Hybrid GA-GWO,7,0.0,0.0
+43,43,Proposed Hybrid GA-GWO,8,0.0,0.0
+43,43,Proposed Hybrid GA-GWO,9,0.0,0.0
+43,43,Proposed Hybrid GA-GWO,10,0.0,0.0
+43,43,Proposed Hybrid GA-GWO,11,0.0,0.0
+43,43,Proposed Hybrid GA-GWO,12,0.0,0.0
+43,43,No Augmentation,0,0.0,0.0
+43,43,No Augmentation,1,0.0,0.0
+43,43,No Augmentation,2,0.0,0.0
+43,43,No Augmentation,3,0.0,0.0
+43,43,No Augmentation,4,0.0,0.0
+43,43,No Augmentation,5,0.0,0.0
+43,43,No Augmentation,6,0.0,0.0
+43,43,No Augmentation,7,0.0,0.0
+43,43,No Augmentation,8,0.0,0.0
+43,43,No Augmentation,9,0.0,0.0
+43,43,No Augmentation,10,0.0,0.0
+43,43,No Augmentation,11,0.0,0.0
+43,43,No Augmentation,12,0.0,0.0
+43,43,No Augmentation,13,0.0,0.0
+43,43,No Augmentation,14,0.0,0.0
+43,43,No Augmentation,15,0.0,0.0
+43,43,No Augmentation,16,0.0,0.0
+43,43,No Augmentation,17,0.0,0.0
+43,43,No Augmentation,18,0.0,0.0
+43,43,No Augmentation,19,0.0,0.0
+43,43,EDA,0,0.0,0.0
+43,43,EDA,1,0.0,0.0
+43,43,EDA,2,0.0,0.0
+43,43,EDA,3,0.0,0.0
+43,43,EDA,4,0.0,0.0
+43,43,EDA,5,0.0,0.0
+43,43,EDA,6,0.0,0.0
+43,43,EDA,7,0.0,0.0
+43,43,EDA,8,0.0,0.0
+43,43,EDA,9,0.0,0.0
+43,43,EDA,10,0.0,0.0
+43,43,EDA,11,0.0,0.0
+43,43,EDA,12,0.0,0.0
+43,43,EDA,13,0.0,0.0
+43,43,EDA,14,0.0,0.0
+43,43,EDA,15,0.0,0.0
+43,43,EDA,16,0.0,0.0
+43,43,EDA,17,0.0,0.0
+43,43,EDA,18,0.0,0.0
+43,43,EDA,19,0.0,0.0
+43,43,Synonym Replacement,0,0.0,0.0
+43,43,Synonym Replacement,1,0.0,0.0
+43,43,Synonym Replacement,2,0.0,0.0
+43,43,Synonym Replacement,3,0.0,0.0
+43,43,Synonym Replacement,4,0.0,0.0
+43,43,Synonym Replacement,5,0.0,0.0
+43,43,Synonym Replacement,6,0.0,0.0
+43,43,Synonym Replacement,7,0.0,0.0
+43,43,Synonym Replacement,8,0.0,0.0
+43,43,Synonym Replacement,9,0.0,0.0
+43,43,Synonym Replacement,10,0.0,0.0
+43,43,Synonym Replacement,11,0.0,0.0
+43,43,Synonym Replacement,12,0.0,0.0
+43,43,Synonym Replacement,13,0.0,0.0
+43,43,Synonym Replacement,14,0.0,0.0
+43,43,Synonym Replacement,15,0.0,0.0
+43,43,Synonym Replacement,16,0.0,0.0
+43,43,Synonym Replacement,17,0.0,0.0
+43,43,Synonym Replacement,18,0.0,0.0
+43,43,Synonym Replacement,19,0.0,0.0
+43,43,Back Translation,0,0.0,0.0
+43,43,Back Translation,1,0.0,0.0
+43,43,Back Translation,2,0.0,0.0
+43,43,Back Translation,3,0.0,0.0
+43,43,Back Translation,4,0.0,0.0
+43,43,Back Translation,5,0.0,0.0
+43,43,Back Translation,6,0.0,0.0
+43,43,Back Translation,7,0.0,0.0
+43,43,Back Translation,8,0.0,0.0
+43,43,Back Translation,9,0.0,0.0
+43,43,Back Translation,10,0.0,0.0
+43,43,Back Translation,11,0.0,0.0
+43,43,Back Translation,12,0.0,0.0
+43,43,Back Translation,13,0.0,0.0
+43,43,Back Translation,14,0.0,0.0
+43,43,Back Translation,15,0.0,0.0
+43,43,Back Translation,16,0.0,0.0
+43,43,Back Translation,17,0.0,0.0
+43,43,Back Translation,18,0.0,0.0
+43,43,Back Translation,19,0.0,0.0
+43,43,Contextual Augmentation (BERT),0,0.0,0.0
+43,43,Contextual Augmentation (BERT),1,0.0,0.0
+43,43,Contextual Augmentation (BERT),2,0.0,0.0
+43,43,Contextual Augmentation (BERT),3,0.0,0.0
+43,43,Contextual Augmentation (BERT),4,0.0,0.0
+43,43,Contextual Augmentation (BERT),5,0.0,0.0
+43,43,Contextual Augmentation (BERT),6,0.0,0.0
+43,43,Contextual Augmentation (BERT),7,0.0,0.0
+43,43,Contextual Augmentation (BERT),8,0.0,0.0
+43,43,Contextual Augmentation (BERT),9,0.0,0.0
+43,43,Contextual Augmentation (BERT),10,0.0,0.0
+43,43,Contextual Augmentation (BERT),11,0.0,0.0
+43,43,Contextual Augmentation (BERT),12,0.0,0.0
+43,43,Contextual Augmentation (BERT),13,0.0,0.0
+43,43,Contextual Augmentation (BERT),14,0.0,0.0
+43,43,Contextual Augmentation (BERT),15,0.0,0.0
+43,43,Contextual Augmentation (BERT),16,0.0,0.0
+43,43,Contextual Augmentation (BERT),17,0.0,0.0
+43,43,Contextual Augmentation (BERT),18,0.0,0.0
+43,43,Contextual Augmentation (BERT),19,0.0,0.0
+43,43,DistilBERT Only,0,0.0,0.0
+43,43,DistilBERT Only,1,0.0,0.0
+43,43,DistilBERT Only,2,0.0,0.0
+43,43,DistilBERT Only,3,0.0,0.0
+43,43,DistilBERT Only,4,0.0,0.0
+43,43,DistilBERT Only,5,0.0,0.0
+43,43,DistilBERT Only,6,0.0,0.0
+43,43,DistilBERT Only,7,0.0,0.0
+43,43,DistilBERT Only,8,0.0,0.0
+43,43,DistilBERT Only,9,0.0,0.0
+43,43,DistilBERT Only,10,0.0,0.0
+43,43,DistilBERT Only,11,0.0,0.0
+43,43,DistilBERT Only,12,0.0,0.0
+43,43,DistilBERT Only,13,0.0,0.0
+43,43,DistilBERT Only,14,0.0,0.0
+43,43,DistilBERT Only,15,0.0,0.0
+43,43,DistilBERT Only,16,0.0,0.0
+43,43,DistilBERT Only,17,0.0,0.0
+43,43,DistilBERT Only,18,0.0,0.0
+43,43,DistilBERT Only,19,0.0,0.0
+43,43,RoBERTa Only,0,0.0,0.0
+43,43,RoBERTa Only,1,0.0,0.0
+43,43,RoBERTa Only,2,0.0,0.0
+43,43,RoBERTa Only,3,0.0,0.0
+43,43,RoBERTa Only,4,0.0,0.0
+43,43,RoBERTa Only,5,0.0,0.0
+43,43,RoBERTa Only,6,0.0,0.0
+43,43,RoBERTa Only,7,0.0,0.0
+43,43,RoBERTa Only,8,0.0,0.0
+43,43,RoBERTa Only,9,0.0,0.0
+43,43,RoBERTa Only,10,0.0,0.0
+43,43,RoBERTa Only,11,0.0,0.0
+43,43,RoBERTa Only,12,0.0,0.0
+43,43,RoBERTa Only,13,0.0,0.0
+43,43,RoBERTa Only,14,0.0,0.0
+43,43,RoBERTa Only,15,0.0,0.0
+43,43,RoBERTa Only,16,0.0,0.0
+43,43,RoBERTa Only,17,0.0,0.0
+43,43,RoBERTa Only,18,0.0,0.0
+43,43,RoBERTa Only,19,0.0,0.0

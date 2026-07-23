@@ -1,0 +1,6 @@
+Chunk_ID,Strategy,Pre_Floor_Budget,Post_Floor_Budget,Hard_Floor,FACI_Scalar
+4,BERT Contextual,5,5,2,0.2186
+5,BERT Contextual,5,5,2,0.215
+6,Hybrid,1,2,2,0.2267
+7,Hybrid,3,3,2,0.1549
+8,Hybrid,5,5,2,0.242

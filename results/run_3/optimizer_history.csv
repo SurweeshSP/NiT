@@ -1,26 +1,151 @@
 run_id,seed,baseline,chunk,fitness,expected_utility
-3,456,Hybrid GA + GWO,0,0.8090998753958657,0.8090998753958657
-3,456,Hybrid GA + GWO,1,0.8090998753958657,0.8090998753958657
-3,456,Hybrid GA + GWO,2,0.8090998753958657,0.8090998753958657
-3,456,Hybrid GA + GWO,3,0.8090998753958657,0.8090998753958657
-3,456,Hybrid GA + GWO,4,0.8090998753958657,0.8090998753958657
-3,456,Hybrid GA + GWO,5,0.8090998753958657,0.8090998753958657
-3,456,Hybrid GA + GWO,6,0.8224215147924362,0.8224215147924362
-3,456,Hybrid GA + GWO,7,0.8224215147924362,0.8224215147924362
-3,456,Hybrid GA + GWO,8,0.8224215147924362,0.8224215147924362
-3,456,Hybrid GA + GWO,9,0.8224215147924362,0.8224215147924362
-3,456,Hybrid GA + GWO,10,0.8224215147924362,0.8224215147924362
-3,456,Hybrid GA + GWO,11,0.8224215147924362,0.8224215147924362
-3,456,Hybrid GA + GWO,12,0.8224215147924362,0.8224215147924362
-3,456,Hybrid GA + GWO,13,0.8224215147924362,0.8224215147924362
-3,456,Hybrid GA + GWO,14,0.8224215147924362,0.8224215147924362
-3,456,Hybrid GA + GWO,15,0.8224215147924362,0.8224215147924362
-3,456,Hybrid GA + GWO,16,0.828374054475478,0.828374054475478
-3,456,Hybrid GA + GWO,17,0.8289512438488291,0.8289512438488291
-3,456,Hybrid GA + GWO,18,0.8289512438488291,0.8289512438488291
-3,456,Hybrid GA + GWO,19,0.8289512438488291,0.8289512438488291
-3,456,Hybrid GA + GWO,20,0.8289512438488291,0.8289512438488291
-3,456,Hybrid GA + GWO,21,0.8289512438488291,0.8289512438488291
-3,456,Hybrid GA + GWO,22,0.8289512438488291,0.8289512438488291
-3,456,Hybrid GA + GWO,23,0.8289512438488291,0.8289512438488291
-3,456,Hybrid GA + GWO,24,0.829045583368592,0.829045583368592
+3,456,Proposed Hybrid GA-GWO,0,0.17119769119769118,0.17119769119769118
+3,456,Proposed Hybrid GA-GWO,1,0.2785317460317461,0.2785317460317461
+3,456,Proposed Hybrid GA-GWO,2,0.42047921071176886,0.42047921071176886
+3,456,Proposed Hybrid GA-GWO,3,0.5358481735343348,0.5358481735343348
+3,456,Proposed Hybrid GA-GWO,4,0.7341506084444525,0.7341506084444525
+3,456,Proposed Hybrid GA-GWO,5,0.7153386859376163,0.7153386859376163
+3,456,Proposed Hybrid GA-GWO,6,0.7348969563885605,0.7348969563885605
+3,456,Proposed Hybrid GA-GWO,7,0.740894218693392,0.740894218693392
+3,456,Proposed Hybrid GA-GWO,8,0.7458179756560176,0.7458179756560176
+3,456,Proposed Hybrid GA-GWO,9,0.7707674965330962,0.7707674965330962
+3,456,No Augmentation,0,0.0,0.0
+3,456,No Augmentation,1,0.0,0.0
+3,456,No Augmentation,2,0.0,0.0
+3,456,No Augmentation,3,0.0,0.0
+3,456,No Augmentation,4,0.0,0.0
+3,456,No Augmentation,5,0.0,0.0
+3,456,No Augmentation,6,0.0,0.0
+3,456,No Augmentation,7,0.0,0.0
+3,456,No Augmentation,8,0.0,0.0
+3,456,No Augmentation,9,0.0,0.0
+3,456,No Augmentation,10,0.0,0.0
+3,456,No Augmentation,11,0.0,0.0
+3,456,No Augmentation,12,0.0,0.0
+3,456,No Augmentation,13,0.0,0.0
+3,456,No Augmentation,14,0.0,0.0
+3,456,No Augmentation,15,0.0,0.0
+3,456,No Augmentation,16,0.0,0.0
+3,456,No Augmentation,17,0.0,0.0
+3,456,No Augmentation,18,0.0,0.0
+3,456,No Augmentation,19,0.0,0.0
+3,456,EDA,0,0.0,0.0
+3,456,EDA,1,0.0,0.0
+3,456,EDA,2,0.0,0.0
+3,456,EDA,3,0.0,0.0
+3,456,EDA,4,0.0,0.0
+3,456,EDA,5,0.0,0.0
+3,456,EDA,6,0.0,0.0
+3,456,EDA,7,0.0,0.0
+3,456,EDA,8,0.0,0.0
+3,456,EDA,9,0.0,0.0
+3,456,EDA,10,0.0,0.0
+3,456,EDA,11,0.0,0.0
+3,456,EDA,12,0.0,0.0
+3,456,EDA,13,0.0,0.0
+3,456,EDA,14,0.0,0.0
+3,456,EDA,15,0.0,0.0
+3,456,EDA,16,0.0,0.0
+3,456,EDA,17,0.0,0.0
+3,456,EDA,18,0.0,0.0
+3,456,EDA,19,0.0,0.0
+3,456,Synonym Replacement,0,0.0,0.0
+3,456,Synonym Replacement,1,0.0,0.0
+3,456,Synonym Replacement,2,0.0,0.0
+3,456,Synonym Replacement,3,0.0,0.0
+3,456,Synonym Replacement,4,0.0,0.0
+3,456,Synonym Replacement,5,0.0,0.0
+3,456,Synonym Replacement,6,0.0,0.0
+3,456,Synonym Replacement,7,0.0,0.0
+3,456,Synonym Replacement,8,0.0,0.0
+3,456,Synonym Replacement,9,0.0,0.0
+3,456,Synonym Replacement,10,0.0,0.0
+3,456,Synonym Replacement,11,0.0,0.0
+3,456,Synonym Replacement,12,0.0,0.0
+3,456,Synonym Replacement,13,0.0,0.0
+3,456,Synonym Replacement,14,0.0,0.0
+3,456,Synonym Replacement,15,0.0,0.0
+3,456,Synonym Replacement,16,0.0,0.0
+3,456,Synonym Replacement,17,0.0,0.0
+3,456,Synonym Replacement,18,0.0,0.0
+3,456,Synonym Replacement,19,0.0,0.0
+3,456,Back Translation,0,0.0,0.0
+3,456,Back Translation,1,0.0,0.0
+3,456,Back Translation,2,0.0,0.0
+3,456,Back Translation,3,0.0,0.0
+3,456,Back Translation,4,0.0,0.0
+3,456,Back Translation,5,0.0,0.0
+3,456,Back Translation,6,0.0,0.0
+3,456,Back Translation,7,0.0,0.0
+3,456,Back Translation,8,0.0,0.0
+3,456,Back Translation,9,0.0,0.0
+3,456,Back Translation,10,0.0,0.0
+3,456,Back Translation,11,0.0,0.0
+3,456,Back Translation,12,0.0,0.0
+3,456,Back Translation,13,0.0,0.0
+3,456,Back Translation,14,0.0,0.0
+3,456,Back Translation,15,0.0,0.0
+3,456,Back Translation,16,0.0,0.0
+3,456,Back Translation,17,0.0,0.0
+3,456,Back Translation,18,0.0,0.0
+3,456,Back Translation,19,0.0,0.0
+3,456,Contextual Augmentation (BERT),0,0.0,0.0
+3,456,Contextual Augmentation (BERT),1,0.0,0.0
+3,456,Contextual Augmentation (BERT),2,0.0,0.0
+3,456,Contextual Augmentation (BERT),3,0.0,0.0
+3,456,Contextual Augmentation (BERT),4,0.0,0.0
+3,456,Contextual Augmentation (BERT),5,0.0,0.0
+3,456,Contextual Augmentation (BERT),6,0.0,0.0
+3,456,Contextual Augmentation (BERT),7,0.0,0.0
+3,456,Contextual Augmentation (BERT),8,0.0,0.0
+3,456,Contextual Augmentation (BERT),9,0.0,0.0
+3,456,Contextual Augmentation (BERT),10,0.0,0.0
+3,456,Contextual Augmentation (BERT),11,0.0,0.0
+3,456,Contextual Augmentation (BERT),12,0.0,0.0
+3,456,Contextual Augmentation (BERT),13,0.0,0.0
+3,456,Contextual Augmentation (BERT),14,0.0,0.0
+3,456,Contextual Augmentation (BERT),15,0.0,0.0
+3,456,Contextual Augmentation (BERT),16,0.0,0.0
+3,456,Contextual Augmentation (BERT),17,0.0,0.0
+3,456,Contextual Augmentation (BERT),18,0.0,0.0
+3,456,Contextual Augmentation (BERT),19,0.0,0.0
+3,456,DistilBERT Only,0,0.0,0.0
+3,456,DistilBERT Only,1,0.0,0.0
+3,456,DistilBERT Only,2,0.0,0.0
+3,456,DistilBERT Only,3,0.0,0.0
+3,456,DistilBERT Only,4,0.0,0.0
+3,456,DistilBERT Only,5,0.0,0.0
+3,456,DistilBERT Only,6,0.0,0.0
+3,456,DistilBERT Only,7,0.0,0.0
+3,456,DistilBERT Only,8,0.0,0.0
+3,456,DistilBERT Only,9,0.0,0.0
+3,456,DistilBERT Only,10,0.0,0.0
+3,456,DistilBERT Only,11,0.0,0.0
+3,456,DistilBERT Only,12,0.0,0.0
+3,456,DistilBERT Only,13,0.0,0.0
+3,456,DistilBERT Only,14,0.0,0.0
+3,456,DistilBERT Only,15,0.0,0.0
+3,456,DistilBERT Only,16,0.0,0.0
+3,456,DistilBERT Only,17,0.0,0.0
+3,456,DistilBERT Only,18,0.0,0.0
+3,456,DistilBERT Only,19,0.0,0.0
+3,456,RoBERTa Only,0,0.0,0.0
+3,456,RoBERTa Only,1,0.0,0.0
+3,456,RoBERTa Only,2,0.0,0.0
+3,456,RoBERTa Only,3,0.0,0.0
+3,456,RoBERTa Only,4,0.0,0.0
+3,456,RoBERTa Only,5,0.0,0.0
+3,456,RoBERTa Only,6,0.0,0.0
+3,456,RoBERTa Only,7,0.0,0.0
+3,456,RoBERTa Only,8,0.0,0.0
+3,456,RoBERTa Only,9,0.0,0.0
+3,456,RoBERTa Only,10,0.0,0.0
+3,456,RoBERTa Only,11,0.0,0.0
+3,456,RoBERTa Only,12,0.0,0.0
+3,456,RoBERTa Only,13,0.0,0.0
+3,456,RoBERTa Only,14,0.0,0.0
+3,456,RoBERTa Only,15,0.0,0.0
+3,456,RoBERTa Only,16,0.0,0.0
+3,456,RoBERTa Only,17,0.0,0.0
+3,456,RoBERTa Only,18,0.0,0.0
+3,456,RoBERTa Only,19,0.0,0.0

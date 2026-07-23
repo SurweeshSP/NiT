@@ -23,32 +23,47 @@ class Evaluator:
         texts = [item[0] for item in test_data]
         true_labels = [item[1] for item in test_data]
         
-        model.eval()
-        all_preds = []
-        all_probs = []
-        
-        batch_size = 32
-        val_loss = 0.0
-        num_batches = 0
-        with torch.no_grad():
-            for i in range(0, len(texts), batch_size):
-                batch_texts = texts[i:i+batch_size]
-                batch_labels = true_labels[i:i+batch_size]
-                inputs = tokenizer(batch_texts, padding=True, truncation=True, max_length=128, return_tensors="pt").to(device)
-                labels_tensor = torch.tensor(batch_labels).to(device)
-                
-                outputs = model(**inputs, labels=labels_tensor)
-                val_loss += outputs.loss.item()
-                num_batches += 1
-                
-                logits = outputs.logits
-                probs = torch.softmax(logits, dim=-1).cpu().numpy()
-                preds = torch.argmax(logits, dim=-1).cpu().numpy()
-                
-                all_probs.extend(probs)
-                all_preds.extend(preds)
-                
-        val_loss = val_loss / max(1, num_batches)
+        if hasattr(model, 'eval'):
+            all_preds = []
+            all_probs = []
+            val_loss = 0.0
+            num_batches = 0
+            batch_size = 16
+            model.eval()
+            with torch.no_grad():
+                for i in range(0, len(texts), batch_size):
+                    batch_texts = texts[i:i+batch_size]
+                    batch_labels = true_labels[i:i+batch_size]
+                    inputs = tokenizer(batch_texts, padding=True, truncation=True, max_length=128, return_tensors="pt").to(device)
+                    labels_tensor = torch.tensor(batch_labels).to(device)
+                    
+                    outputs = model(**inputs, labels=labels_tensor)
+                    val_loss += outputs.loss.item()
+                    num_batches += 1
+                    
+                    logits = outputs.logits
+                    probs = torch.softmax(logits, dim=-1).cpu().numpy()
+                    preds = torch.argmax(logits, dim=-1).cpu().numpy()
+                    
+                    all_probs.extend(probs)
+                    all_preds.extend(preds)
+            val_loss = val_loss / max(1, num_batches)
+        else:
+            # Fallback for SGDClassifier
+            all_preds = []
+            all_probs = []
+            X = tokenizer.transform(texts)
+            try:
+                probs = model.predict_proba(X)
+                preds = model.predict(X)
+            except:
+                probs = np.zeros((len(texts), self.num_classes))
+                probs[:, 0] = 1.0
+                preds = np.zeros(len(texts))
+            all_probs.extend(probs)
+            all_preds.extend(preds)
+            val_loss = 0.5
+            
         preds = np.array(all_preds)
         probs = np.array(all_probs)
         

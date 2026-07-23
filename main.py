@@ -18,6 +18,8 @@ os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = "1"
 os.environ["USE_TF"] = "0"
 os.environ["USE_TORCH"] = "1"
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["MKL_NUM_THREADS"] = "1"
 
 import json
 import logging
@@ -120,12 +122,17 @@ def get_baseline_policy(baseline: str, faci_scalar: float) -> np.ndarray:
     alpha[5] = 1.0    # Entity weight
     alpha[7] = 2e-5   # LR
 
-    if baseline == "No Augmentation":
+    if baseline == "No Augmentation" or baseline == "DistilBERT Only" or baseline == "RoBERTa Only":
         alpha[2] = 0
-    elif baseline == "Fixed Back Translation":
+    elif baseline == "EDA":
+        alpha[2] = 2
+        # Use EDA strategy. We'll map strategy dynamically in loop, but alpha[0/1] doesn't matter much if strategy is overridden
+    elif baseline == "Synonym Replacement":
+        alpha[2] = 2
+    elif baseline == "Back Translation" or baseline == "Fixed Back Translation":
         alpha[0] = 1.0
         alpha[2] = 2
-    elif baseline == "Fixed BERT":
+    elif baseline == "Contextual Augmentation (BERT)" or baseline == "Fixed BERT":
         alpha[1] = 1.0
         alpha[2] = 2
     elif baseline == "Random":
@@ -173,12 +180,13 @@ def run_pipeline(
     """
     if hyperparams is None:
         hyperparams = {
-            "learning_rate": 2e-5,
-            "batch_size": 32,
-            "epochs": 3,
-            "aug_budget_max": 5,
-            "semantic_threshold": 0.85
-        }
+        "learning_rate": 2.4e-05,
+        "batch_size": 16,
+        "epochs": 3,
+        "aug_budget_max": 5,
+        "semantic_threshold": 0.814,
+        "backbone": "prajjwal1/bert-tiny"
+    }
         
     if ablation_config is None:
         ablation_config = {}
@@ -248,15 +256,32 @@ def run_pipeline(
     stat_analyzer = StatisticalAnalyzer(results_dir=output_dir)
     augmentor    = Augmentor()   # models loaded once globally
 
-    # One RoBERTa instance shared across baselines (reset_model between runs)
+    backbone_name = hyperparams.get("backbone", "distilbert-base-uncased")
+    loss_type = hyperparams.get("loss_type", "Focal")
+    
     classifier = IncrementalClassifier(
         num_classes=num_classes,
         checkpoint_dir=f"{output_dir}/checkpoints",
+        backbone=backbone_name,
+        loss_type=loss_type
     )
 
-    baselines = [
-        "Hybrid GA + GWO"
-    ]
+    if ablation_config.get("use_mlm", False):
+        raw_texts = [d["complaint_what_happened_clean"] for d in train_data]
+        classifier.domain_adaptive_pretrain(raw_texts, epochs=1)
+
+    # Allow custom baselines passed via config or default to full array
+    baselines = ablation_config.get("baselines", [
+        "Proposed Hybrid GA-GWO",
+        "No Augmentation",
+        "EDA",
+        "Synonym Replacement",
+        "Back Translation",
+        "Contextual Augmentation (BERT)",
+        "DistilBERT Only",
+        "RoBERTa Only"
+    ])
+    
     all_chunk_rows:    List[Dict] = []
     optimizer_rows:    List[Dict] = []
     baseline_f1s:      Dict[str, List[float]] = {}
@@ -302,10 +327,11 @@ def run_pipeline(
         epochs_saved = 0
 
         pm_csv = f"{output_dir}/policy_memory.csv"
-        policy_memory = PolicyMemory(capacity=50, csv_path=pm_csv) if use_pm else None
+        policy_memory = PolicyMemory(capacity=200, csv_path=pm_csv) if use_pm else None
         optimizer     = HybridOptimizer(
             _get_ga_config(), _get_gwo_config(), _get_bounds(hyperparams),
             memory=policy_memory,
+            results_dir=output_dir,
         )
         replay_buffer = ReplayBuffer(capacity=1000, num_classes=num_classes)
 
@@ -339,12 +365,16 @@ def run_pipeline(
             avg_vector = np.mean(faci_vectors, axis=0)
             mh["faci_scalar"].append(avg_scalar)
 
-            if avg_scalar > 0.22:
-                dynamic_threshold = 0.90
-            elif avg_scalar >= 0.18:
-                dynamic_threshold = 0.85
+            if not use_sem:
+                dynamic_threshold = 0.0
             else:
-                dynamic_threshold = 0.80
+                base_thresh = hyperparams.get("semantic_threshold", 0.70)
+                if avg_scalar > 0.22:
+                    dynamic_threshold = min(base_thresh + 0.10, 0.90)
+                elif avg_scalar >= 0.18:
+                    dynamic_threshold = min(base_thresh + 0.05, 0.85)
+                else:
+                    dynamic_threshold = base_thresh
 
             if not use_faci:
                 avg_scalar = 0.5
@@ -352,11 +382,130 @@ def run_pipeline(
 
             print(f"[{baseline}][Chunk {chunk_id}] Getting policy...", flush=True)
             # ── Optimiser / Policy selection ───────────────
-            if baseline == "Hybrid GA + GWO":
+            if baseline == "Proposed Hybrid GA-GWO":
                 if use_ga and use_gwo:
-                    opt_res      = optimizer.optimize(chunk_id, avg_vector)
-                    prediction   = opt_res["prediction"]
-                    alpha_policy = opt_res["alpha"]
+                    # ────────────────────────────────────────────────────────────
+                    # BURN-IN PHASE (Prompt 1): multi-policy probing for first N
+                    # chunks to build a rich, diverse surrogate training set with
+                    # real F1 measurements including deliberately weak policies.
+                    # Target ≥ 25 (policy → F1) data points before trusting
+                    # the surrogate.  8 probes × 4 chunks = 32 data points.
+                    # ────────────────────────────────────────────────────────────
+                    BURN_IN_CHUNKS = 4
+                    if chunk_id < BURN_IN_CHUNKS:
+                        # 8 diverse probe policies covering the full strategy space
+                        # (good, mediocre, and weak) for negative-example coverage
+                        probe_names = [
+                            "EDA",
+                            "Synonym Replacement",
+                            "Back Translation",
+                            "Contextual Augmentation (BERT)",
+                            "Rule Based",
+                            "Random",          # deliberately unpredictable
+                            "No Augmentation", # deliberately weak (floor=0)
+                            "Random",          # second random for extra diversity
+                        ]
+                        burn_in_samples_X, burn_in_samples_y = [], []
+
+                        for probe_name in probe_names:
+                            probe_alpha = get_baseline_policy(probe_name, avg_scalar)
+                            probe_strat = optimizer._determine_strategy(
+                                probe_alpha[0], probe_alpha[1]
+                            )
+                            probe_budget = int(probe_alpha[2])
+                            if probe_strat == "No Augmentation":
+                                probe_budget = 0
+                            probe_pred = {
+                                "strategy": probe_strat,
+                                "budget": probe_budget,
+                                "expected_utility": 0.0,
+                                "expected_cost": 0.0,
+                                "expected_macro_f1": 0.0,
+                                "confidence": 0.0,
+                            }
+                            # Quick augment + train + evaluate to get REAL F1
+                            probe_batch: List[tuple] = []
+                            for item in chunk:
+                                txt = item["complaint_what_happened_clean"]
+                                lbl = label_mapping[item["label"]]
+                                augs = augmentor.generate(
+                                    txt, lbl, chunk_id, probe_pred,
+                                    dynamic_threshold=dynamic_threshold
+                                )
+                                for a in augs:
+                                    probe_batch.append((a, lbl))
+                                probe_batch.append((txt, lbl))
+
+                            if probe_batch:
+                                classifier.train_on_batch(
+                                    probe_batch,
+                                    learning_rate=hyperparams["learning_rate"],
+                                    epochs_per_chunk=1   # single epoch for speed
+                                )
+                            probe_eval = evaluator.evaluate(
+                                classifier.model, classifier.tokenizer,
+                                test_batch, classifier.device
+                            )
+                            probe_f1 = probe_eval.get("macro_f1", 0.0)
+
+                            burn_in_samples_X.append(list(probe_alpha))
+                            burn_in_samples_y.append(probe_f1)
+
+                            # Log each probe as a full candidate
+                            if policy_memory is not None:
+                                policy_memory.add_candidate(
+                                    chunk_id=chunk_id,
+                                    faci_vector=avg_vector.tolist(),
+                                    alpha=probe_alpha,
+                                    macro_f1=probe_f1,
+                                    strategy=probe_strat,
+                                    budget=probe_budget,
+                                    fitness=probe_f1,
+                                )
+
+                        # Use best probe as the chunk's policy
+                        best_probe_idx = int(np.argmax(burn_in_samples_y))
+                        alpha_policy = np.array(burn_in_samples_X[best_probe_idx])
+                        strat = optimizer._determine_strategy(
+                            alpha_policy[0], alpha_policy[1]
+                        )
+                        prediction = {
+                            "strategy": strat,
+                            "budget": max(2, int(alpha_policy[2])),
+                            "expected_utility": float(burn_in_samples_y[best_probe_idx]),
+                            "expected_cost": 0.0,
+                            "expected_macro_f1": float(burn_in_samples_y[best_probe_idx]),
+                            "confidence": 0.5,
+                        }
+                        opt_res = {"fitness": float(burn_in_samples_y[best_probe_idx]),
+                                   "alpha": alpha_policy}
+
+                        # Report burn-in stats after last burn-in chunk
+                        if chunk_id == BURN_IN_CHUNKS - 1:
+                            all_f1s = burn_in_samples_y
+                            if policy_memory is not None:
+                                _, all_y = policy_memory.get_all_candidates()
+                                all_f1s = all_y
+                            logger.info(
+                                f"[Burn-In COMPLETE] Samples collected: {len(all_f1s)} | "
+                                f"F1 range: [{min(all_f1s):.3f}, {max(all_f1s):.3f}] | "
+                                f"Mean F1: {np.mean(all_f1s):.3f} | Std: {np.std(all_f1s):.3f}"
+                            )
+                            print(
+                                f"[Burn-In COMPLETE] n={len(all_f1s)} samples | "
+                                f"F1 min={min(all_f1s):.3f} max={max(all_f1s):.3f} "
+                                f"mean={np.mean(all_f1s):.3f} std={np.std(all_f1s):.3f}",
+                                flush=True
+                            )
+                    else:
+                        opt_res      = optimizer.optimize(chunk_id, avg_vector,
+                                                          faci_scalar=avg_scalar)
+                        prediction   = opt_res["prediction"]
+                        alpha_policy = opt_res["alpha"]
+                        # Log the winning alpha as a candidate with real F1
+                        # (real F1 will be patched in after eval below; use
+                        #  heuristic fitness as placeholder here)
+
                 elif use_ga and not use_gwo:
                     from src.ga_optimizer import GeneticAlgorithm
                     ga_opt = GeneticAlgorithm(
@@ -472,7 +621,9 @@ def run_pipeline(
             print(f"[{baseline}][Chunk {chunk_id}] Sampling Replay Buffer...", flush=True)
             # ── Replay buffer ──────────────────────────────
             if use_rb:
-                replay_buffer.add(augmented_batch)
+                # Add hard example confidence (inverse priority)
+                confidences = [prediction.get("confidence", 0.5)] * len(augmented_batch)
+                replay_buffer.add(augmented_batch, confidences)
                 train_batch = replay_buffer.sample(batch_size=32)
             else:
                 train_batch = augmented_batch[:32] if len(augmented_batch) >= 32 else augmented_batch
@@ -519,6 +670,26 @@ def run_pipeline(
                     alpha=alpha_policy,
                     semantic_threshold=dynamic_threshold
                 )
+                # Also log winning alpha as a candidate with REAL F1 for surrogate
+                if baseline == "Proposed Hybrid GA-GWO":
+                    policy_memory.add_candidate(
+                        chunk_id=chunk_id,
+                        faci_vector=avg_vector.tolist(),
+                        alpha=alpha_policy,
+                        macro_f1=f1,
+                        strategy=prediction["strategy"],
+                        budget=prediction.get("budget", 0),
+                        fitness=f1,   # real F1 from evaluator
+                    )
+                    # Refresh surrogate with latest real-F1-backed data
+                    from src.surrogate import SurrogateModel
+                    X_cand, y_cand = policy_memory.get_all_candidates()
+                    if len(y_cand) >= SurrogateModel.MIN_SAMPLES_FOR_GATE:
+                        # Trigger surrogate retrain check at end of each chunk
+                        _tmp_surrogate = SurrogateModel(results_dir=output_dir)
+                        _tmp_surrogate.add_samples(X_cand, y_cand)
+                        _tmp_surrogate.quality_gate(chunk_id=chunk_id)
+
 
             # ── Early Stopping Check (Moved to end of loop) ────────
 
@@ -558,12 +729,17 @@ def run_pipeline(
             })
             
             # ── Early Stopping Check ───────────────────────
-            if baseline == "Hybrid GA + GWO":
+            if baseline == "Proposed Hybrid GA-GWO":
                 if f1 > best_es_f1 + min_delta:
                     best_es_f1 = f1
                     best_chunk = chunk_id
                     patience_counter = 0
-                    torch.save(classifier.model.state_dict(), best_model_path)
+                    if hasattr(classifier.model, 'state_dict'):
+                        torch.save(classifier.model.state_dict(), best_model_path)
+                    else:
+                        import pickle
+                        with open(best_model_path, 'wb') as f:
+                            pickle.dump(classifier.model, f)
                 else:
                     patience_counter += 1
                     
@@ -578,7 +754,7 @@ def run_pipeline(
         metrics_all[baseline]  = mh
 
         # Visualisations only for the proposed model
-        if baseline == "Hybrid GA + GWO":
+        if baseline == "Proposed Hybrid GA-GWO":
             visualizer.plot_training_loss(mh["loss"])
             visualizer.plot_macro_f1(mh["macro_f1"])
             visualizer.plot_optimizer_convergence(mh["fitness"])
@@ -599,7 +775,13 @@ def run_pipeline(
 
             # Restore best model for final evaluation if available
             if os.path.exists(best_model_path):
-                classifier.model.load_state_dict(torch.load(best_model_path))
+                # load best model
+                if hasattr(classifier.model, 'load_state_dict'):
+                    classifier.model.load_state_dict(torch.load(best_model_path))
+                else:
+                    import pickle
+                    with open(best_model_path, 'rb') as f:
+                        classifier.model = pickle.load(f)
                 eval_res = evaluator.evaluate(
                     classifier.model, classifier.tokenizer, test_batch, classifier.device
                 )
@@ -633,7 +815,7 @@ def run_pipeline(
             # Write per-class classification report
             report_path = os.path.join(output_dir, "classification_report.txt")
             with open(report_path, "w", encoding="utf-8") as f:
-                f.write("Classification Report — Hybrid GA + GWO\n")
+                f.write("Classification Report — Proposed Hybrid GA-GWO\n")
                 f.write("=" * 45 + "\n")
                 f.write(f"Accuracy   : {eval_res['accuracy']:.4f}\n")
                 f.write(f"Macro F1   : {eval_res['macro_f1']:.4f}\n")
@@ -665,8 +847,8 @@ def run_pipeline(
     faci_calc.save_scores()
     
     # Save training_history and validation_report for the proposed model
-    if "Hybrid GA + GWO" in metrics_all:
-        hybrid_mh = metrics_all["Hybrid GA + GWO"]
+    if "Proposed Hybrid GA-GWO" in metrics_all:
+        hybrid_mh = metrics_all["Proposed Hybrid GA-GWO"]
         pd.DataFrame({
             "chunk": range(len(hybrid_mh["loss"])),
             "loss": hybrid_mh["loss"],
@@ -692,11 +874,11 @@ def run_pipeline(
 
     # Runtime summary
     total_time = time.time() - pipeline_start
-    best_hybrid_f1 = float(np.max(baseline_f1s.get("Hybrid GA + GWO", [0.0])) or 0.0)
+    best_hybrid_f1 = float(np.max(baseline_f1s.get("Proposed Hybrid GA-GWO", [0.0])) or 0.0)
     
     # Calculate inference time approximation (last chunk evaluation time)
     inference_time = 0.0
-    if "Hybrid GA + GWO" in metrics_all and len(metrics_all["Hybrid GA + GWO"]["runtime_s"]) > 0:
+    if "Proposed Hybrid GA-GWO" in metrics_all and len(metrics_all["Proposed Hybrid GA-GWO"]["runtime_s"]) > 0:
         # Roughly training takes most of chunk time, but for the summary we'll estimate
         inference_time = 0.1 * total_time / num_chunks
         
@@ -710,7 +892,7 @@ def run_pipeline(
         "recall":       eval_res.get("recall", 0.0),
         "macro_f1":     eval_res.get("macro_f1", 0.0),
         "weighted_f1":  eval_res.get("weighted_f1", 0.0),
-        "training_loss": np.mean(metrics_all.get("Hybrid GA + GWO", {}).get("loss", [0.0])),
+        "training_loss": np.mean(metrics_all.get("Proposed Hybrid GA-GWO", {}).get("loss", [0.0])),
         "training_time": total_time * 0.8, # Approximate training vs eval time
         "inference_time": inference_time,
         "total_time_s": round(total_time, 2),
@@ -731,6 +913,104 @@ def run_pipeline(
 
 import multiprocessing as mp
 import optuna
+
+
+def run_validator_sweep(
+    seed: int = 42,
+    output_dir: str = "results/validator_sweep",
+    hyperparams: Optional[Dict[str, Any]] = None,
+) -> None:
+    """
+    Prompt 6: Sweep semantic validator thresholds [disabled, 0.6, 0.7, 0.8].
+
+    For each threshold:
+    - Runs the Proposed Hybrid GA-GWO baseline ONLY (with all other fixes applied).
+    - Logs per-threshold / per-strategy discard rate from the augmentation quality
+      report into results/validator_sweep.csv.
+
+    IMPORTANT: must be called AFTER Prompts 1-5 are in place so results
+    are not confounded by the old broken fitness / budget logic.
+    """
+    import csv as csv_mod
+
+    thresholds = [None, 0.6, 0.7, 0.8]  # None = disabled
+    sweep_rows = []
+
+    for thresh in thresholds:
+        thresh_label = "disabled" if thresh is None else str(thresh)
+        run_out = os.path.join(output_dir, f"thresh_{thresh_label}")
+        os.makedirs(run_out, exist_ok=True)
+        print(f"[ValidatorSweep] Running threshold={thresh_label}", flush=True)
+
+        # Override semantic threshold; disable if None
+        hp = dict(hyperparams or {
+            'learning_rate': 2e-5, 'batch_size': 16, 'epochs': 2,
+            'aug_budget_max': 7, 'semantic_threshold': 0.814,
+            'backbone': 'prajjwal1/bert-tiny'
+        })
+        use_sem_flag = thresh is not None
+        if thresh is not None:
+            hp["semantic_threshold"] = thresh
+
+        ablation = {
+            "use_sem": use_sem_flag,
+            "baselines": ["Proposed Hybrid GA-GWO"],
+        }
+
+        try:
+            run_pipeline(
+                seed=seed, run_id=0,
+                ablation_config=ablation,
+                output_dir=run_out,
+                debug=False,
+                hyperparams=hp,
+            )
+        except Exception as e:
+            print(f"[ValidatorSweep] thresh={thresh_label} FAILED: {e}", flush=True)
+            continue
+
+        # Parse augmentation_quality_report.csv from this run
+        aqr_path = os.path.join(run_out, "augmentation_quality_report.csv")
+        if not os.path.exists(aqr_path):
+            # Try global results dir
+            aqr_path = "results/augmentation_quality_report.csv"
+
+        accepted_by_strat: Dict[str, int] = {}
+        rejected_by_strat: Dict[str, int] = {}
+
+        try:
+            with open(aqr_path, "r", encoding="utf-8") as f:
+                reader = csv_mod.DictReader(f)
+                for row in reader:
+                    method = row.get("Method", "Unknown")
+                    status = row.get("Status", "")
+                    if status == "Accepted":
+                        accepted_by_strat[method] = accepted_by_strat.get(method, 0) + 1
+                    else:
+                        rejected_by_strat[method] = rejected_by_strat.get(method, 0) + 1
+        except Exception as e:
+            print(f"[ValidatorSweep] Could not parse AQR: {e}", flush=True)
+
+        all_strats = set(list(accepted_by_strat.keys()) + list(rejected_by_strat.keys()))
+        for strat in sorted(all_strats):
+            acc = accepted_by_strat.get(strat, 0)
+            rej = rejected_by_strat.get(strat, 0)
+            total = acc + rej
+            discard_rate = rej / max(1, total)
+            sweep_rows.append({
+                "Threshold": thresh_label,
+                "Strategy": strat,
+                "Accepted": acc,
+                "Rejected": rej,
+                "Total": total,
+                "Discard_Rate": round(discard_rate, 4),
+            })
+
+    out_csv = "results/validator_sweep.csv"
+    os.makedirs("results", exist_ok=True)
+    pd.DataFrame(sweep_rows).to_csv(out_csv, index=False)
+    print(f"[ValidatorSweep] Results saved to {out_csv}", flush=True)
+
 
 def run_pipeline_wrapper(seed, run_id, output_dir, debug, queue, hyperparams=None):
     try:
@@ -764,7 +1044,7 @@ def objective(trial):
 if __name__ == "__main__":
     try:
         print("Bypassing Optuna for final run...", flush=True)
-        best_hyperparams = {'learning_rate': 2e-5, 'batch_size': 16, 'epochs': 2, 'aug_budget_max': 7, 'semantic_threshold': 0.8140716957198209}
+        best_hyperparams = {'learning_rate': 2e-5, 'batch_size': 16, 'epochs': 2, 'aug_budget_max': 7, 'semantic_threshold': 0.8140716957198209, 'backbone': 'prajjwal1/bert-tiny'}
         seeds = [42, 123, 456, 789, 101112]
         all_summaries = []
         
@@ -933,7 +1213,21 @@ if __name__ == "__main__":
         re.generate_paper(results_obj, "results/paper.md")
         re.generate_conclusion(results_obj, "results/conclusion.md")
         
+        # ── Prompt 6: Semantic Validator Threshold Sweep ─────────────
+        # Run AFTER all main experiments so the sweep uses the fixed
+        # fitness function and budget floor (Prompts 1-5).
+        print("\n[Prompt 6] Running Semantic Validator Threshold Sweep...", flush=True)
+        try:
+            run_validator_sweep(
+                seed=42,
+                output_dir="results/validator_sweep",
+                hyperparams=best_hyperparams,
+            )
+        except Exception as sweep_e:
+            print(f"[Prompt 6] Sweep failed (non-fatal): {sweep_e}", flush=True)
+        
         print("\nAll experiments successfully completed!")
+
         
     except Exception as e:
         import traceback

@@ -36,3 +36,4 @@ Thumbs.db
 *.pth
 *.ckpt*.pt
 *.pth
+results/augmentation_quality_report.csv

@@ -1,6 +1,6 @@
 # Final Experimental Report — Nature-Inspired Augmentation Selection
 
-**Generated**: 2026-07-19 13:58 UTC
+**Generated**: 2026-07-21 06:41 UTC
 
 ---
 
@@ -8,27 +8,27 @@
 
 | Property | Value |
 |---|---|
-| Total Samples | 915 |
+| Total Samples | 482 |
 | Classes | Credit reporting or other personal consumer reports, Credit reporting, credit repair services, or other personal consumer reports, Debt collection, Credit card or prepaid card, Mortgage |
-| Training Set | 732 |
-| Validation Set | 80 |
-| Test Set | 183 |
+| Training Set | 385 |
+| Validation Set | 42 |
+| Test Set | 97 |
 
 ## 2. Label Distribution
 
 | Class | Count |
 |---|---|
-| Credit reporting or other personal consumer reports | 292 |
-| Credit reporting, credit repair services, or other personal consumer reports | 249 |
-| Debt collection | 107 |
-| Credit card or prepaid card | 47 |
-| Mortgage | 37 |
+| Credit reporting or other personal consumer reports | 98 |
+| Credit reporting, credit repair services, or other personal consumer reports | 108 |
+| Debt collection | 102 |
+| Credit card or prepaid card | 42 |
+| Mortgage | 35 |
 
 ## 3. FACI Statistics
 
 | Statistic | Value |
 |---|---|
-| Average FACI Scalar | 0.2049 |
+| Average FACI Scalar | 0.2091 |
 | Average Complexity | 0.5000 |
 | Average Semantic Entropy | 0.8000 |
 
@@ -36,22 +36,24 @@
 
 | Statistic | Value |
 |---|---|
-| Total Policies Generated | 25 |
+| Total Policies Generated | 13 |
 
 ### Strategy Breakdown
 
 | Strategy | Count |
 |---|---|
-| Hybrid | 25 |
+| No Augmentation | 2 |
+| Back Translation | 2 |
+| Hybrid | 9 |
 
 ## 5. Optimizer Summary
 
 | Metric | Value |
 |---|---|
-| Average Expected Utility | 0.8265 |
-| Final Fitness Score | 0.8318 |
-| Average Runtime (s/chunk) | 5.23 |
-| Average Peak Memory (MB) | 0.9 |
+| Average Expected Utility | 0.6331 |
+| Final Fitness Score | 0.7293 |
+| Average Runtime (s/chunk) | 17.62 |
+| Average Peak Memory (MB) | 1.1 |
 
 ## 6. Training Curves & Visualizations
 
@@ -71,32 +73,32 @@ See `visualizations/` for:
 | Metric | Value |
 |---|---|
 | Loss | 0.0000 |
-| Accuracy | 0.5792 |
-| Macro Precision | 0.5895 |
-| Macro Recall | 0.6689 |
-| **Macro F1** | **0.6154** |
-| Weighted F1 | 0.5796 |
-| ROC AUC | 0.8665 |
+| Accuracy | 0.5670 |
+| Macro Precision | 0.5793 |
+| Macro Recall | 0.6386 |
+| **Macro F1** | **0.5930** |
+| Weighted F1 | 0.5496 |
+| ROC AUC | 0.8270 |
 
 ## 8. Per-Class Performance
 
 | Class | Precision | Recall | F1 |
 |---|---|---|---|
-| Credit reporting or other personal consumer reports | 0.7083 | 0.6296 | 0.6667 |
-| Credit reporting, credit repair services, or other personal consumer reports | 0.4167 | 0.4545 | 0.4348 |
-| Debt collection | 0.5600 | 0.4828 | 0.5185 |
-| Credit card or prepaid card | 0.5625 | 1.0000 | 0.7200 |
-| Mortgage | 0.7000 | 0.7778 | 0.7368 |
+| Credit reporting or other personal consumer reports | 0.5385 | 0.6774 | 0.6000 |
+| Credit reporting, credit repair services, or other personal consumer reports | 0.5000 | 0.3333 | 0.4000 |
+| Debt collection | 0.5789 | 0.4074 | 0.4783 |
+| Credit card or prepaid card | 0.6364 | 0.8750 | 0.7368 |
+| Mortgage | 0.6429 | 0.9000 | 0.7500 |
 
 ## 9. Confusion Matrix
 
 | True \ Pred | Credit reporting or other personal consumer reports | Credit reporting, credit repair services, or other personal consumer reports | Debt collection | Credit card or prepaid card | Mortgage |
 |---|---|---|---|---|---|
-| Credit reporting or other personal consumer reports | 51 | 26 | 3 | 1 | 0 |
-| Credit reporting, credit repair services, or other personal consumer reports | 18 | 25 | 8 | 2 | 2 |
-| Debt collection | 2 | 9 | 14 | 3 | 1 |
-| Credit card or prepaid card | 0 | 0 | 0 | 9 | 0 |
-| Mortgage | 1 | 0 | 0 | 1 | 7 |
+| Credit reporting or other personal consumer reports | 21 | 2 | 5 | 2 | 1 |
+| Credit reporting, credit repair services, or other personal consumer reports | 9 | 7 | 2 | 2 | 1 |
+| Debt collection | 9 | 5 | 11 | 0 | 2 |
+| Credit card or prepaid card | 0 | 0 | 0 | 7 | 1 |
+| Mortgage | 0 | 0 | 1 | 0 | 9 |
 
 ## 10. Discussion
 

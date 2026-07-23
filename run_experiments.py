@@ -29,11 +29,18 @@ from src.statistical_analysis import StatisticalAnalyzer
 from src.visualizer import Visualizer
 from src.reporter import Reporter
 
+def load_hyperparams():
+    try:
+        with open("best_hyperparameters.json", "r") as f:
+            return json.load(f)
+    except:
+        return None
+
 # ─────────────────────────────────────────────────────────────
 # Configuration
 # ─────────────────────────────────────────────────────────────
 
-SEEDS         = [42, 43, 44, 45, 46]
+SEEDS         = [43, 44]
 OUTPUT_DIR    = "results/multi_seed"
 VIZ_DIR       = "visualizations/publication"
 
@@ -484,6 +491,8 @@ and enabling faster regulatory compliance escalation.
 # Main experiment runner
 # ─────────────────────────────────────────────────────────────
 
+
+
 def main():
     print("=" * 70)
     print("  Nature-Inspired Augmentation — Multi-Seed Experiment Runner")
@@ -493,20 +502,29 @@ def main():
     os.makedirs(VIZ_DIR,    exist_ok=True)
 
     # ── Phase 1: 5-Seed robustness experiment ─────────────────
-    print("\n[Phase 1] 5-Seed Robustness Experiment\n")
+    print("\n[Phase 1] Robustness Experiment (Seeds 43 & 44)\n")
     all_seed_dfs: List[pd.DataFrame] = []
 
     for i, seed in enumerate(SEEDS):
-        print(f"  → Seed {seed} (Run {i+1}/{len(SEEDS)})")
+        print(f"  -> Seed {seed} (Run {i+1}/{len(SEEDS)})")
+        run_dir = os.path.join(OUTPUT_DIR, f"seed_{seed}")
+        os.makedirs(run_dir, exist_ok=True)
         metrics = run_pipeline(
             seed=seed,
-            run_id=i + 1,
-            ablation_config={},
-            output_dir=OUTPUT_DIR,
+            run_id=seed,
+            ablation_config={"baselines": [
+                "Proposed Hybrid GA-GWO", "No Augmentation", "EDA", "Synonym Replacement", 
+                "Back Translation", "Contextual Augmentation (BERT)", "DistilBERT Only", "RoBERTa Only"
+            ]},
+            output_dir=run_dir,
             debug=False,
+            hyperparams=load_hyperparams()
         )
-        # Load the just-written CSV
-        csv_path = os.path.join(OUTPUT_DIR, f"metrics_run{i+1}.csv")
+        gc.collect()
+
+    # Load metrics.csv from all completed seeds (42, 43, 44)
+    for s in [42, 43, 44]:
+        csv_path = os.path.join(OUTPUT_DIR, f"seed_{s}", "metrics.csv")
         if os.path.exists(csv_path):
             all_seed_dfs.append(pd.read_csv(csv_path))
         gc.collect()
@@ -535,7 +553,7 @@ def main():
     # Best Hybrid result
     hybrid_f1_mean = hybrid_f1_std = 0.0
     if not agg.empty:
-        hybrid_row = agg[agg["Baseline"] == "Hybrid GA + GWO"]
+        hybrid_row = agg[agg["Baseline"] == "Proposed Hybrid GA-GWO"]
         if not hybrid_row.empty:
             hybrid_f1_mean = float(hybrid_row["Macro F1 Mean"].iloc[0])
             hybrid_f1_std  = float(hybrid_row["Macro F1 Std"].iloc[0])
@@ -545,16 +563,21 @@ def main():
     ablation_rows: List[Dict] = []
 
     for config_name, config in ABLATION_CONFIGS.items():
-        print(f"  → Ablation: {config_name}")
+        print(f"  -> Ablation: {config_name}")
+        # Pass baselines parameter to just evaluate the Hybrid method in ablations
+        config_with_baselines = dict(config)
+        config_with_baselines["baselines"] = ["Proposed Hybrid GA-GWO"]
+        
         metrics = run_pipeline(
             seed=42,
             run_id=99,   # Dedicated run ID for ablations
-            ablation_config=config,
+            ablation_config=config_with_baselines,
             output_dir=os.path.join(OUTPUT_DIR, "ablation"),
             debug=False,
+            hyperparams=load_hyperparams()
         )
         # Extract Hybrid F1 from ablation run
-        hybrid_f1s = metrics.get("Hybrid GA + GWO", {}).get("macro_f1", [0.0])
+        hybrid_f1s = metrics.get("Proposed Hybrid GA-GWO", {}).get("macro_f1", [0.0])
         ablation_rows.append({
             "Configuration": config_name,
             "Macro F1 Mean": round(float(np.mean(hybrid_f1s)), 4),

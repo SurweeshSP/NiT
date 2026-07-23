@@ -1,0 +1,9 @@
+{
+    "learning_rate": 1.143579708539566e-05,
+    "batch_size": 16,
+    "epochs": 10,
+    "aug_budget_max": 4,
+    "semantic_threshold": 0.7846553378703849,
+    "backbone": "roberta-base",
+    "loss_type": "CBL"
+}

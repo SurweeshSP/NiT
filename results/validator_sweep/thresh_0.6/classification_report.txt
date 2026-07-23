@@ -1,0 +1,11 @@
+Classification Report — Proposed Hybrid GA-GWO
+=============================================
+Accuracy   : 0.5876
+Macro F1   : 0.6263
+Weighted F1: 0.5890
+
+  Credit reporting or other personal consumer reports  P=0.5625  R=0.5806  F1=0.5714
+  Credit reporting, credit repair services, or other personal consumer reports  P=0.4348  R=0.4762  F1=0.4545
+  Debt collection                 P=0.6400  R=0.5926  F1=0.6154
+  Credit card or prepaid card     P=0.7778  R=0.8750  F1=0.8235
+  Mortgage                        P=0.7500  R=0.6000  F1=0.6667

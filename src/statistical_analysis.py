@@ -75,7 +75,7 @@ class StatisticalAnalyzer:
         Wilcoxon test and 95% CI. Saves statistical_analysis.csv.
         """
         rows = []
-        hybrid_f1s = baseline_macro_f1s.get("Hybrid GA + GWO", [])
+        hybrid_f1s = baseline_macro_f1s.get("Proposed Hybrid GA-GWO", [])
 
         for name, f1s in baseline_macro_f1s.items():
             if not f1s:
@@ -83,7 +83,7 @@ class StatisticalAnalyzer:
             mean = float(np.mean(f1s))
             std  = float(np.std(f1s))
             ci   = self.confidence_interval(f1s)
-            p    = self.wilcoxon_test(hybrid_f1s, f1s) if name != "Hybrid GA + GWO" else 1.0
+            p    = self.wilcoxon_test(hybrid_f1s, f1s) if name != "Proposed Hybrid GA-GWO" else 1.0
 
             rows.append({
                 "Baseline":       name,
@@ -115,7 +115,7 @@ class StatisticalAnalyzer:
         """
         summary_rows = []
         hybrid_all = combined_df.loc[
-            combined_df["baseline"] == "Hybrid GA + GWO", "macro_f1"
+            combined_df["baseline"] == "Proposed Hybrid GA-GWO", "macro_f1"
         ].tolist()
 
         for bl in combined_df["baseline"].unique():
@@ -125,7 +125,7 @@ class StatisticalAnalyzer:
             mean = float(np.mean(subset))
             std  = float(np.std(subset))
             ci   = self.confidence_interval(subset)
-            p    = self.wilcoxon_test(hybrid_all, subset) if bl != "Hybrid GA + GWO" else 1.0
+            p    = self.wilcoxon_test(hybrid_all, subset) if bl != "Proposed Hybrid GA-GWO" else 1.0
 
             summary_rows.append({
                 "Baseline":              bl,

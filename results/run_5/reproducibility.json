@@ -6,13 +6,14 @@
         "batch_size": 16,
         "epochs": 2,
         "aug_budget_max": 7,
-        "semantic_threshold": 0.8140716957198209
+        "semantic_threshold": 0.8140716957198209,
+        "backbone": "prajjwal1/bert-tiny"
     },
-    "Execution Timestamp": "2026-07-19T19:28:24.651249",
+    "Execution Timestamp": "2026-07-21T12:11:21.829949",
     "Software Versions": {
-        "Python": "3.10.11 (tags/v3.10.11:7d4cc5a, Apr  5 2023, 00:38:17) [MSC v.1929 64 bit (AMD64)]",
-        "Torch": "2.11.0+cu126",
-        "Numpy": "2.2.6",
-        "Pandas": "2.3.3"
+        "Python": "3.12.3 | packaged by conda-forge | (main, Apr 15 2024, 18:20:11) [MSC v.1938 64 bit (AMD64)]",
+        "Torch": "2.13.0+cpu",
+        "Numpy": "2.5.1",
+        "Pandas": "3.0.3"
     }
 }
